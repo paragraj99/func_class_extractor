@@ -170,11 +170,12 @@ import time, pyautogui
 # file_path = r"D:\st.html"
 file_path = r"D:\z\func_class_code_extractor\func_class_extractor\gov_extract\st.html"
 file_url = "file:///" + os.path.abspath(file_path).replace("\\", "/")
-# output_excel = r"D:\scraped_data.xlsx"
+output_excel = "scraped_data.xlsx"
 
 # === Step 1: Initialize WebDriver and Load File ===
 driver = webdriver.Chrome()
 driver.get(file_url)
+# driver.get('https://freesearchigrservice.maharashtra.gov.in/')
 time.sleep(10)  # Allow content to load
 
 def export_registration_data_to_excel(driver, output_excel):
@@ -182,6 +183,15 @@ def export_registration_data_to_excel(driver, output_excel):
     wb = Workbook()
     ws = wb.active
     ws.title = "Registration Data"
+
+    # Locate the specific nested table using XPath
+    nested_table = driver.find_element(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table')
+    # Find all <td> elements inside the nested table
+    td_elements = nested_table.find_elements(By.TAG_NAME, 'td')
+    # Print the count
+    total_page = int(len(td_elements))
+    print(type(total_page))
+    print(total_page)
 
     # === Step 3: Get All Table Rows ===
     rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
@@ -194,20 +204,20 @@ def export_registration_data_to_excel(driver, output_excel):
         print(f"Header Row: {headers}")
 
     # === Step 5: Extract Table Body Rows (from <td> tags), Skipping Last Row ===
-    for i, row in enumerate(rows[1:-1], start=2):  # Skip first (header) and last row
-        tds = row.find_elements(By.TAG_NAME, 'td')
-        row_data = [td.text.strip() for td in tds]
-        if row_data:
-            ws.append(row_data)
-            print(f"Row {i}: {row_data}")
+    for j in range(2, total_page + 1):
+        for i, row in enumerate(rows[1:-1], start=2):  # Skip first (header) and last row
+            tds = row.find_elements(By.TAG_NAME, 'td')
+            row_data = [td.text.strip() for td in tds]
+            if row_data:
+                ws.append(row_data)
+                print(f"Row {i}: {row_data}")
 
+        xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{j}]/a'
+        link = driver.find_element(By.XPATH, xpath)
+        link.click()
+        time.sleep(2)
 
-        # Locate the specific nested table using XPath
-        nested_table = driver.find_element(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table')
-        # Find all <td> elements inside the nested table
-        td_elements = nested_table.find_elements(By.TAG_NAME, 'td')
-        # Print the count
-        print("Total <td> elements inside nested table:", len(td_elements))
+        # input('Press Enter to continue :')
 
     # === Step 6: Save to Excel ===
     wb.save(output_excel)
@@ -230,7 +240,8 @@ def simulate_context_menu_and_copy():
     time.sleep(2)
 
     pyautogui.hotkey('shift', 'f10')
-    press_key_multiple_times('down', 9, delay=0.1, final_key='enter', final_delay=3)
+    # input('Press :')
+    press_key_multiple_times('down', 5, delay=0.1, final_key='enter', final_delay=3)
     press_key_multiple_times('tab', 3, delay=0.1, final_key='enter', final_delay=3)
 
     pyautogui.click()
@@ -238,6 +249,6 @@ def simulate_context_menu_and_copy():
 export_registration_data_to_excel(driver, 'D:\scraped_data_marathi.xlsx')
 time.sleep(2)  
 simulate_context_menu_and_copy()
-time.sleep(2)  
+time.sleep(10)  
 export_registration_data_to_excel(driver, 'D:\scraped_data_english.xlsx')
 time.sleep(2)  
