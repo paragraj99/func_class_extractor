@@ -376,7 +376,7 @@
 
 
 
-# sunday code 
+# # sunday code 
 
 
 
@@ -386,139 +386,315 @@
 
 
 
-def click_indexii_buttons(driver, doc_no):
-    from selenium.common.exceptions import (
-        NoSuchElementException,
-        StaleElementReferenceException,
-        NoSuchWindowException,
-    )
+# def click_indexii_buttons(driver, doc_no):
+#     from selenium.common.exceptions import (
+#         NoSuchElementException,
+#         StaleElementReferenceException,
+#         NoSuchWindowException,
+#     )
+#     from selenium.webdriver.support.ui import WebDriverWait
+#     from selenium.webdriver.support import expected_conditions as EC
+#     from selenium.webdriver.common.by import By
+#     import time
+#     import logging
+
+#     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+#     original_window = driver.current_window_handle
+#     row_index = 2
+#     doc_index = 0
+#     processed_rows = 0
+
+#     filtered_rows = filter_rows_by_style(driver)
+#     total_pdf_links = len(filtered_rows)
+#     print(f"Total pdf links: {total_pdf_links}")
+
+#     def close_extra_tabs():
+#         current_handles = driver.window_handles
+#         for handle in current_handles:
+#             if handle != original_window:
+#                 try:
+#                     driver.switch_to.window(handle)
+#                     driver.close()
+#                     print(f"[INFO] Closed extra tab: {handle}")
+#                 except:
+#                     pass
+#         try:
+#             driver.switch_to.window(original_window)
+#         except NoSuchWindowException:
+#             print("[ERROR] Could not switch back to original tab!")
+
+#     if wait_until_chrome_page_fully_loaded(driver):
+#         while True:
+#             try:
+#                 xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[{row_index}]/td[10]//input[@type="button" and @value="IndexII"]'
+#                 print(f"Trying to click button at row {row_index}...")
+
+#                 if wait_for_loader(driver):
+#                     try:
+#                         button = driver.find_element(By.XPATH, xpath)
+#                         button.click()
+#                         print(f"Clicked IndexII at row {row_index}")
+#                         time.sleep(5)
+#                     except Exception as e:
+#                         print(f"[WARNING] Failed to click button at row {row_index}: {e}")
+#                         row_index += 1
+#                         continue
+
+#                 if wait_until_chrome_page_fully_loaded(driver):
+#                     all_windows = driver.window_handles
+#                     row_processed = False
+
+#                     if wait_for_loader(driver):
+#                         if wait_until_chrome_page_fully_loaded(driver):
+#                             if len(all_windows) > 1:
+#                                 new_tab = None
+#                                 for window_handle in all_windows:
+#                                     if window_handle != original_window:
+#                                         new_tab = window_handle
+#                                         break
+                                
+#                                 if wait_until_chrome_page_fully_loaded(driver):
+#                                     if new_tab:
+#                                         try:
+#                                             driver.switch_to.window(new_tab)
+#                                             print(f"Switched to new tab (row {row_index})")
+#                                             # time.sleep(20)
+#                                             time.sleep(10)
+
+#                                             if wait_until_chrome_page_fully_loaded(driver):
+#                                                 process_document_result = process_document_upload(driver, doc_index, doc_no)
+
+#                                                 if process_document_result:
+#                                                     doc_index += 1
+#                                                     # driver.close()
+#                                                     close_extra_tabs()
+#                                                     time.sleep(3)
+#                                                     try:
+#                                                         driver.switch_to.window(original_window)
+#                                                         print("✅ Switched back to original tab")
+#                                                     except NoSuchWindowException:
+#                                                         print("[ERROR] Original tab closed unexpectedly.")
+#                                                         return
+#                                                     time.sleep(3)
+#                                                     row_processed = True
+#                                                 else:
+#                                                     print("❌ Document processing failed. Will retry same row.")
+
+#                                         except NoSuchWindowException:
+#                                             print(f"[WARNING] Tab closed unexpectedly for row {row_index}.")
+#                                             close_extra_tabs()
+#                                     else:
+#                                         print("❌ Could not detect new tab. Skipping.")
+#                                         row_processed = True
+#                             else:
+#                                 print("❌ New tab did not open. Skipping to next row.")
+#                                 row_processed = True
+
+#                 if row_processed:
+#                     row_index += 1
+#                     processed_rows += 1
+#                     if processed_rows >= total_pdf_links:
+#                         print(f"[INFO] Processed all {total_pdf_links} PDF links.")
+#                         close_extra_tabs()
+#                         return
+
+#                 time.sleep(2)
+
+#             except NoSuchElementException:
+#                 print(f"[INFO] No more IndexII buttons found at row {row_index}. Done.")
+#                 break
+
+#             except StaleElementReferenceException:
+#                 print(f"[WARNING] Stale element at row {row_index}, retrying...")
+#                 time.sleep(2)
+#                 continue
+
+#             except Exception as e:
+#                 print(f"[ERROR] Unexpected error: {e}")
+#                 close_extra_tabs()
+#                 row_index += 1
+#                 continue
+        
+#             close_extra_tabs()
+#     close_extra_tabs()
+#     print("[INFO] Done processing all rows.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def extract_and_save_data(driver, year: int, folder_path: str):
+#     wb = Workbook()
+#     ws = wb.active
+#     ws.title = "Registration Data"
+
+#     if wait_for_loader(driver):
+#         nested_table = driver.find_element(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table')
+#         td_elements = nested_table.find_elements(By.TAG_NAME, 'td')
+#         total_page = int(len(td_elements))
+
+#     rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+
+#     header_row = rows[0]  
+#     headers = [th.text.strip() for th in header_row.find_elements(By.TAG_NAME, 'th') if th.text.strip()]
+#     if headers:
+#         ws.append(headers)
+#         print(f"Header Row: {headers}")
+
+#     # === Step 5: Extract Table Body Rows (from <td> tags), Skipping Last Row ===
+#     if wait_for_loader(driver):
+#         text_to_find = "* Information provided on this site is updated and no physical visit is required to obtain this information"
+#         element = driver.find_elements(By.XPATH, f"//b[normalize-space(text())='{text_to_find}']")
+#         simulate_context_menu_and_copy(driver, element)
+
+#         doc_no = []
+        
+#         for page_no in range(1, total_page + 1):  # Start from page 1 to include all pages
+#             if wait_for_loader(driver):
+#                 print('p ', page_no)
+#                 if page_no != 1:  # Skip clicking for the first page
+#                 # if page_no > 1:
+#                     print(f"\nNavigating to page {page_no}")
+#                     xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{page_no}]/a'
+#                     if wait_for_loader(driver):
+#                         link = driver.find_element(By.XPATH, xpath)
+#                         link.click()
+#                         time.sleep(5)
+#                         if wait_for_loader(driver):
+#                             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#                             # wait_for_loader(driver)
+
+#                 if wait_for_loader(driver):
+#                     driver.execute_script("window.scrollTo(0, 0);")
+#                     time.sleep(2)
+#                     # Re-fetch and scrape after navigating
+#                     rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+#                     for i, row in enumerate(rows[1:-1], start=2):  # Skip header and pagination row
+#                         tds = row.find_elements(By.TAG_NAME, 'td')
+#                         row_data = [td.text.strip() for td in tds]
+#                         if row_data:
+#                             doc_no.append(row_data[0])
+#                             update_json_data(year, row_data, headers=headers)
+#                             ws.append(row_data)
+#                             print(f"Row {i}: {row_data}")
+
+                    
+#                     # input("start pdf work :")
+
+#                     if wait_for_loader(driver):
+#                         # doc_no = [9306, 4077, 676, 956, 126, 12666, 12310, 7488, 1580, 4103]
+#                         print('doc_no :', doc_no)
+#                         click_indexii_buttons(driver, doc_no)
+#                         doc_no.clear()
+
+#                     # input("Press Enter to continue to the next page :")
+#                 print('page_no track', page_no)
+
+#     print(f"\nProcessing row {i}...")
+#     # input("Press :")
+
+#     excel_file = path.join(folder_path, f"{year}.xlsx")
+#     wb.save(excel_file)
+#     print(f"\n✅ Data successfully saved to: {excel_file}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def click_page(driver, page_index, wait_selector=None, timeout=10):
+    from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
-    from selenium.webdriver.common.by import By
     import time
-    import logging
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    pagination_tds = driver.find_elements(
+        By.XPATH,
+        '//tr[contains(@style, "background-color:#CCCCCC")]//table//tr/td'
+    )
+    total = len(pagination_tds)
+    if page_index < 1 or page_index > total:
+        raise IndexError(f"page_index must be 1..{total}, got {page_index}")
 
-    original_window = driver.current_window_handle
-    row_index = 2
-    doc_index = 0
-    processed_rows = 0
+    td = pagination_tds[page_index - 1]
+    try:
+        link = td.find_element(By.TAG_NAME, "a")
+    except:
+        link = td  # Might be a <span>
 
-    filtered_rows = filter_rows_by_style(driver)
-    total_pdf_links = len(filtered_rows)
-    print(f"Total pdf links: {total_pdf_links}")
+    try:
+        driver.execute_script("arguments[0].scrollIntoView(true);", link)
+        time.sleep(2)
+        link.click()
+        print(f"[click_page] Clicked page {page_index}")
+    except Exception as e:
+        print(f"[click_page] Failed to click page {page_index}: {e}")
+        return False
 
-    def close_extra_tabs():
-        current_handles = driver.window_handles
-        for handle in current_handles:
-            if handle != original_window:
-                try:
-                    driver.switch_to.window(handle)
-                    driver.close()
-                    print(f"[INFO] Closed extra tab: {handle}")
-                except:
-                    pass
+    if wait_selector:
+        by, sel = wait_selector
         try:
-            driver.switch_to.window(original_window)
-        except NoSuchWindowException:
-            print("[ERROR] Could not switch back to original tab!")
+            WebDriverWait(driver, timeout).until(
+                EC.presence_of_element_located((by, sel))
+            )
+            print(f"[click_page] Waited successfully for selector after page {page_index}")
+        except Exception as e:
+            print(f"[click_page] Wait selector did not appear for page {page_index}: {e}")
+            return False
 
-    if wait_until_chrome_page_fully_loaded(driver):
-        while True:
-            try:
-                xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[{row_index}]/td[10]//input[@type="button" and @value="IndexII"]'
-                print(f"Trying to click button at row {row_index}...")
-
-                if wait_for_loader(driver):
-                    try:
-                        button = driver.find_element(By.XPATH, xpath)
-                        button.click()
-                        print(f"Clicked IndexII at row {row_index}")
-                        time.sleep(5)
-                    except Exception as e:
-                        print(f"[WARNING] Failed to click button at row {row_index}: {e}")
-                        row_index += 1
-                        continue
-
-                if wait_until_chrome_page_fully_loaded(driver):
-                    all_windows = driver.window_handles
-                    row_processed = False
-
-                    if wait_for_loader(driver):
-                        if wait_until_chrome_page_fully_loaded(driver):
-                            if len(all_windows) > 1:
-                                new_tab = None
-                                for window_handle in all_windows:
-                                    if window_handle != original_window:
-                                        new_tab = window_handle
-                                        break
-                                
-                                if wait_until_chrome_page_fully_loaded(driver):
-                                    if new_tab:
-                                        try:
-                                            driver.switch_to.window(new_tab)
-                                            print(f"Switched to new tab (row {row_index})")
-                                            # time.sleep(20)
-                                            time.sleep(10)
-
-                                            if wait_until_chrome_page_fully_loaded(driver):
-                                                process_document_result = process_document_upload(driver, doc_index, doc_no)
-
-                                                if process_document_result:
-                                                    doc_index += 1
-                                                    # driver.close()
-                                                    close_extra_tabs()
-                                                    time.sleep(3)
-                                                    try:
-                                                        driver.switch_to.window(original_window)
-                                                        print("✅ Switched back to original tab")
-                                                    except NoSuchWindowException:
-                                                        print("[ERROR] Original tab closed unexpectedly.")
-                                                        return
-                                                    time.sleep(3)
-                                                    row_processed = True
-                                                else:
-                                                    print("❌ Document processing failed. Will retry same row.")
-
-                                        except NoSuchWindowException:
-                                            print(f"[WARNING] Tab closed unexpectedly for row {row_index}.")
-                                            close_extra_tabs()
-                                    else:
-                                        print("❌ Could not detect new tab. Skipping.")
-                                        row_processed = True
-                            else:
-                                print("❌ New tab did not open. Skipping to next row.")
-                                row_processed = True
-
-                if row_processed:
-                    row_index += 1
-                    processed_rows += 1
-                    if processed_rows >= total_pdf_links:
-                        print(f"[INFO] Processed all {total_pdf_links} PDF links.")
-                        close_extra_tabs()
-                        return
-
-                time.sleep(2)
-
-            except NoSuchElementException:
-                print(f"[INFO] No more IndexII buttons found at row {row_index}. Done.")
-                break
-
-            except StaleElementReferenceException:
-                print(f"[WARNING] Stale element at row {row_index}, retrying...")
-                time.sleep(2)
-                continue
-
-            except Exception as e:
-                print(f"[ERROR] Unexpected error: {e}")
-                close_extra_tabs()
-                row_index += 1
-                continue
-        
-            close_extra_tabs()
-    close_extra_tabs()
-    print("[INFO] Done processing all rows.")
+    return True
 
 
 
@@ -534,7 +710,26 @@ def click_indexii_buttons(driver, doc_no):
 
 
 
-def extract_and_save_data(driver, year: int, folder_path: str):
+
+
+
+
+
+
+
+
+
+
+
+def extract_and_save_data(driver, year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int, folder_path: str):
+    
+    print('year', year)
+    print('district', district)
+    print('sro', sro) 
+    print('village_name', village_name) 
+    print('property_no', property_no)
+    print('folder_path\n', folder_path)
+    
     wb = Workbook()
     ws = wb.active
     ws.title = "Registration Data"
@@ -560,51 +755,153 @@ def extract_and_save_data(driver, year: int, folder_path: str):
 
         doc_no = []
         
-        for page_no in range(1, total_page + 1):  # Start from page 1 to include all pages
-            if wait_for_loader(driver):
-                print('p ', page_no)
-                if page_no != 1:  # Skip clicking for the first page
-                # if page_no > 1:
-                    print(f"\nNavigating to page {page_no}")
-                    xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{page_no}]/a'
+        # for page_no in range(1, total_page + 1):  # Start from page 1 to include all pages
+        #     if wait_for_loader(driver):
+        #         print('p ', page_no)
+        #         if page_no != 1:  # Skip clicking for the first page
+        #         # if page_no > 1:
+        #             print(f"\nNavigating to page {page_no}")
+        #             xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{page_no}]/a'
+        #             if wait_for_loader(driver):
+        #                 link = driver.find_element(By.XPATH, xpath)
+        #                 link.click()
+        #                 time.sleep(5)
+
+        if wait_for_loader(driver):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            # wait_for_loader(driver)
+
+        if wait_for_loader(driver):
+            driver.execute_script("window.scrollTo(0, 0);")
+            time.sleep(3)
+            # Re-fetch and scrape after navigating
+            rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+            for i, row in enumerate(rows[1:-1], start=2):  # Skip header and pagination row
+                tds = row.find_elements(By.TAG_NAME, 'td')
+                row_data = [td.text.strip() for td in tds]
+                if row_data:
+                    doc_no.append(row_data[0])
+                    update_json_data(year, row_data, headers=headers)
+                    ws.append(row_data)
+                    print(f"Row {i}: {row_data}")
+
+            
+            # # input("start pdf work :")
+
+            # if wait_for_loader(driver):
+            #     # doc_no = [9306, 4077, 676, 956, 126, 12666, 12310, 7488, 1580, 4103]
+            #     print('doc_no :', doc_no)
+            #     click_indexii_buttons(driver, doc_no)
+            #     doc_no.clear()
+
+
+
+
+            
+
+            # if wait_for_loader(driver):
+            #     print("\nProceeding for clear fields")
+            #     driver.execute_script("window.scrollTo(0, 0);")
+            #     time.sleep(3)
+            #     driver.find_element(By.ID, "btnCancel").click()
+            
+            # if wait_for_loader(driver):
+            #     print("\nProceeding for clear fields")
+            #     driver.execute_script("window.scrollTo(0, 0);")
+            #     time.sleep(10)
+            #     # driver.find_element(By.XPATH, "/html/body/center/form/div[3]/div/div/div[2]/div/div[2]/div/div[2]/div/div[6]/div[2]/input").click()
+
+            #     input('waiter :')
+
+            # print("\nEnter details of property again")
+            # if wait_for_loader(driver):
+            #     print('year_2 :', year)
+            #     print('district_2 :', district)
+            #     print('district_english_2 :', district_english)
+            #     print('sro_2 :', sro) 
+            #     print('village_name_2 :', village_name) 
+            #     print('property_no_2 :', property_no)
+            #     print('folder_path_2 :\n', folder_path)
+
+            #     tab = WebDriverWait(driver, 10).until(
+            #     expected_conditions.element_to_be_clickable((By.ID, "btnMumbaisearch"))
+            #     )
+            #     tab.click()
+
+            #     input('waiter 2 :')
+
+            #     time.sleep(5)
+
+            #     if wait_for_loader(driver):
+            #         enter_property_details(driver, year, district_english, sro, village_name, property_no)
+
+            #     if wait_for_loader(driver):
+            #         captcha_retrieval(driver, limit=2)
+            #         print('go to extract again 2')
+            #         time.sleep(5)
+
+            #     input('waiter for extract')   
+
+            #     if wait_for_loader(driver):
+            #         # extract_and_save_data(driver, year, folder_path)
+            #         extract_and_save_data(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+
+
+
+
+            total_pages = get_pagination_count(driver)
+            print("Total pages:", total_pages)
+            
+            # for i in range(2, total_pages + 1):
+            #     print(f"Clicking page {i}...")
+
+            #     success = click_page(
+            #         driver,
+            #         page_index=i,
+            #         wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),  # adjust to your table’s selector
+            #         timeout=10
+            #     )
+            #     print(f"Clicked page {i} – success? {success}")
+
+            #     if wait_for_loader(driver):
+            #         retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+
+
+
+
+
+            i = 2
+            while i <= total_pages:
+                try:
+                    print(f"Clicking page {i}...")
+
+                    success = click_page(
+                        driver,
+                        page_index=i,
+                        wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),
+                        timeout=10
+                    )
+                    print(f"Clicked page {i} – success? {success}")
+
                     if wait_for_loader(driver):
-                        link = driver.find_element(By.XPATH, xpath)
-                        link.click()
-                        time.sleep(5)
-                        if wait_for_loader(driver):
-                            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                            # wait_for_loader(driver)
+                        retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
 
-                if wait_for_loader(driver):
-                    driver.execute_script("window.scrollTo(0, 0);")
-                    time.sleep(2)
-                    # Re-fetch and scrape after navigating
-                    rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
-                    for i, row in enumerate(rows[1:-1], start=2):  # Skip header and pagination row
-                        tds = row.find_elements(By.TAG_NAME, 'td')
-                        row_data = [td.text.strip() for td in tds]
-                        if row_data:
-                            doc_no.append(row_data[0])
-                            update_json_data(year, row_data, headers=headers)
-                            ws.append(row_data)
-                            print(f"Row {i}: {row_data}")
+                    i += 1  # Increment only after successful steps
+                except Exception as e:
+                    print(f"Error on page {i}: {e}")
+                    # Optionally: add a delay or retry mechanism here
+                    i += 1  # Still increment to avoid infinite loop
 
-                    
-                    # input("start pdf work :")
 
-                    if wait_for_loader(driver):
-                        # doc_no = [9306, 4077, 676, 956, 126, 12666, 12310, 7488, 1580, 4103]
-                        print('doc_no :', doc_no)
-                        click_indexii_buttons(driver, doc_no)
-                        doc_no.clear()
 
                     # input("Press Enter to continue to the next page :")
-                print('page_no track', page_no)
+    #             print('page_no track', page_no)
 
-    print(f"\nProcessing row {i}...")
-    # input("Press :")
+    # print(f"\nProcessing row {i}...")
+        # input("Press :")
 
     excel_file = path.join(folder_path, f"{year}.xlsx")
     wb.save(excel_file)
     print(f"\n✅ Data successfully saved to: {excel_file}")
+
 
