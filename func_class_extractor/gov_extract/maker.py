@@ -654,254 +654,382 @@
 
 
 
-def click_page(driver, page_index, wait_selector=None, timeout=10):
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    import time
+# def click_page(driver, page_index, wait_selector=None, timeout=10):
+#     from selenium.webdriver.common.by import By
+#     from selenium.webdriver.support.ui import WebDriverWait
+#     from selenium.webdriver.support import expected_conditions as EC
+#     import time
 
-    pagination_tds = driver.find_elements(
-        By.XPATH,
-        '//tr[contains(@style, "background-color:#CCCCCC")]//table//tr/td'
-    )
-    total = len(pagination_tds)
-    if page_index < 1 or page_index > total:
-        raise IndexError(f"page_index must be 1..{total}, got {page_index}")
+#     pagination_tds = driver.find_elements(
+#         By.XPATH,
+#         '//tr[contains(@style, "background-color:#CCCCCC")]//table//tr/td'
+#     )
+#     total = len(pagination_tds)
+#     if page_index < 1 or page_index > total:
+#         raise IndexError(f"page_index must be 1..{total}, got {page_index}")
 
-    td = pagination_tds[page_index - 1]
-    try:
-        link = td.find_element(By.TAG_NAME, "a")
-    except:
-        link = td  # Might be a <span>
+#     td = pagination_tds[page_index - 1]
+#     try:
+#         link = td.find_element(By.TAG_NAME, "a")
+#     except:
+#         link = td  # Might be a <span>
 
-    try:
-        driver.execute_script("arguments[0].scrollIntoView(true);", link)
-        time.sleep(2)
-        link.click()
-        print(f"[click_page] Clicked page {page_index}")
-    except Exception as e:
-        print(f"[click_page] Failed to click page {page_index}: {e}")
-        return False
+#     try:
+#         driver.execute_script("arguments[0].scrollIntoView(true);", link)
+#         time.sleep(2)
+#         link.click()
+#         print(f"[click_page] Clicked page {page_index}")
+#     except Exception as e:
+#         print(f"[click_page] Failed to click page {page_index}: {e}")
+#         return False
 
-    if wait_selector:
-        by, sel = wait_selector
-        try:
-            WebDriverWait(driver, timeout).until(
-                EC.presence_of_element_located((by, sel))
-            )
-            print(f"[click_page] Waited successfully for selector after page {page_index}")
-        except Exception as e:
-            print(f"[click_page] Wait selector did not appear for page {page_index}: {e}")
-            return False
+#     if wait_selector:
+#         by, sel = wait_selector
+#         try:
+#             WebDriverWait(driver, timeout).until(
+#                 EC.presence_of_element_located((by, sel))
+#             )
+#             print(f"[click_page] Waited successfully for selector after page {page_index}")
+#         except Exception as e:
+#             print(f"[click_page] Wait selector did not appear for page {page_index}: {e}")
+#             return False
+
+#     return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def extract_and_save_data(driver, year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int, folder_path: str):
+    
+#     print('year', year)
+#     print('district', district)
+#     print('sro', sro) 
+#     print('village_name', village_name) 
+#     print('property_no', property_no)
+#     print('folder_path\n', folder_path)
+    
+#     wb = Workbook()
+#     ws = wb.active
+#     ws.title = "Registration Data"
+
+#     if wait_for_loader(driver):
+#         nested_table = driver.find_element(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table')
+#         td_elements = nested_table.find_elements(By.TAG_NAME, 'td')
+#         total_page = int(len(td_elements))
+
+#     rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+
+#     header_row = rows[0]  
+#     headers = [th.text.strip() for th in header_row.find_elements(By.TAG_NAME, 'th') if th.text.strip()]
+#     if headers:
+#         ws.append(headers)
+#         print(f"Header Row: {headers}")
+
+#     # === Step 5: Extract Table Body Rows (from <td> tags), Skipping Last Row ===
+#     if wait_for_loader(driver):
+#         text_to_find = "* Information provided on this site is updated and no physical visit is required to obtain this information"
+#         element = driver.find_elements(By.XPATH, f"//b[normalize-space(text())='{text_to_find}']")
+#         simulate_context_menu_and_copy(driver, element)
+
+#         doc_no = []
+        
+#         # for page_no in range(1, total_page + 1):  # Start from page 1 to include all pages
+#         #     if wait_for_loader(driver):
+#         #         print('p ', page_no)
+#         #         if page_no != 1:  # Skip clicking for the first page
+#         #         # if page_no > 1:
+#         #             print(f"\nNavigating to page {page_no}")
+#         #             xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{page_no}]/a'
+#         #             if wait_for_loader(driver):
+#         #                 link = driver.find_element(By.XPATH, xpath)
+#         #                 link.click()
+#         #                 time.sleep(5)
+
+#         if wait_for_loader(driver):
+#             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#             # wait_for_loader(driver)
+
+#         if wait_for_loader(driver):
+#             driver.execute_script("window.scrollTo(0, 0);")
+#             time.sleep(3)
+#             # Re-fetch and scrape after navigating
+#             rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+#             for i, row in enumerate(rows[1:-1], start=2):  # Skip header and pagination row
+#                 tds = row.find_elements(By.TAG_NAME, 'td')
+#                 row_data = [td.text.strip() for td in tds]
+#                 if row_data:
+#                     doc_no.append(row_data[0])
+#                     update_json_data(year, row_data, headers=headers)
+#                     ws.append(row_data)
+#                     print(f"Row {i}: {row_data}")
+
+            
+#             # # input("start pdf work :")
+
+#             # if wait_for_loader(driver):
+#             #     # doc_no = [9306, 4077, 676, 956, 126, 12666, 12310, 7488, 1580, 4103]
+#             #     print('doc_no :', doc_no)
+#             #     click_indexii_buttons(driver, doc_no)
+#             #     doc_no.clear()
+
+
+
+
+            
+
+#             # if wait_for_loader(driver):
+#             #     print("\nProceeding for clear fields")
+#             #     driver.execute_script("window.scrollTo(0, 0);")
+#             #     time.sleep(3)
+#             #     driver.find_element(By.ID, "btnCancel").click()
+            
+#             # if wait_for_loader(driver):
+#             #     print("\nProceeding for clear fields")
+#             #     driver.execute_script("window.scrollTo(0, 0);")
+#             #     time.sleep(10)
+#             #     # driver.find_element(By.XPATH, "/html/body/center/form/div[3]/div/div/div[2]/div/div[2]/div/div[2]/div/div[6]/div[2]/input").click()
+
+#             #     input('waiter :')
+
+#             # print("\nEnter details of property again")
+#             # if wait_for_loader(driver):
+#             #     print('year_2 :', year)
+#             #     print('district_2 :', district)
+#             #     print('district_english_2 :', district_english)
+#             #     print('sro_2 :', sro) 
+#             #     print('village_name_2 :', village_name) 
+#             #     print('property_no_2 :', property_no)
+#             #     print('folder_path_2 :\n', folder_path)
+
+#             #     tab = WebDriverWait(driver, 10).until(
+#             #     expected_conditions.element_to_be_clickable((By.ID, "btnMumbaisearch"))
+#             #     )
+#             #     tab.click()
+
+#             #     input('waiter 2 :')
+
+#             #     time.sleep(5)
+
+#             #     if wait_for_loader(driver):
+#             #         enter_property_details(driver, year, district_english, sro, village_name, property_no)
+
+#             #     if wait_for_loader(driver):
+#             #         captcha_retrieval(driver, limit=2)
+#             #         print('go to extract again 2')
+#             #         time.sleep(5)
+
+#             #     input('waiter for extract')   
+
+#             #     if wait_for_loader(driver):
+#             #         # extract_and_save_data(driver, year, folder_path)
+#             #         extract_and_save_data(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+
+
+
+
+#             total_pages = get_pagination_count(driver)
+#             print("Total pages:", total_pages)
+            
+#             # for i in range(2, total_pages + 1):
+#             #     print(f"Clicking page {i}...")
+
+#             #     success = click_page(
+#             #         driver,
+#             #         page_index=i,
+#             #         wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),  # adjust to your table’s selector
+#             #         timeout=10
+#             #     )
+#             #     print(f"Clicked page {i} – success? {success}")
+
+#             #     if wait_for_loader(driver):
+#             #         retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+
+
+
+
+
+#             i = 2
+#             while i <= total_pages:
+#                 try:
+#                     print(f"Clicking page {i}...")
+
+#                     success = click_page(
+#                         driver,
+#                         page_index=i,
+#                         wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),
+#                         timeout=10
+#                     )
+#                     print(f"Clicked page {i} – success? {success}")
+
+#                     if wait_for_loader(driver):
+#                         retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+
+#                     i += 1  # Increment only after successful steps
+#                 except Exception as e:
+#                     print(f"Error on page {i}: {e}")
+#                     # Optionally: add a delay or retry mechanism here
+#                     i += 1  # Still increment to avoid infinite loop
+
+
+
+#                     # input("Press Enter to continue to the next page :")
+#     #             print('page_no track', page_no)
+
+#     # print(f"\nProcessing row {i}...")
+#         # input("Press :")
+
+#     excel_file = path.join(folder_path, f"{year}.xlsx")
+#     wb.save(excel_file)
+#     print(f"\n✅ Data successfully saved to: {excel_file}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def inject_google_translate(driver, lang_code='en'):
+    language_map = {
+        'en': 'English',
+        'mr': 'Marathi'
+    }
+
+    if lang_code not in language_map:
+        raise ValueError(f"Unsupported language code: {lang_code}")
+
+    driver.execute_script(f"""
+        var script = document.createElement('script');
+        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(script);
+        var div = document.createElement('div');
+        div.id = 'google_translate_element';
+        document.body.appendChild(div);
+        window.googleTranslateElementInit = function() {{
+            new google.translate.TranslateElement({{
+                pageLanguage: 'auto',
+                includedLanguages: '{lang_code}',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }}, 'google_translate_element');
+        }};
+    """)
+
+    # time.sleep(5)
+
+    driver.execute_script(f"""
+        var interval = setInterval(function() {{
+            var iframe = document.querySelector('iframe.goog-te-menu-frame');
+            if (iframe) {{
+                var frameDoc = iframe.contentDocument || iframe.contentWindow.document;
+                var langBtn = Array.from(frameDoc.querySelectorAll('span.text')).find(el => el.textContent === '{language_map[lang_code]}');
+                if (langBtn) {{
+                    langBtn.click();
+                    clearInterval(interval);
+                }}
+            }}
+        }}, 1000);
+    """)
 
     return True
 
+# Example usage:
+# inject_google_translate(driver, 'en')  # For English
+# inject_google_translate(driver, 'mr')  # For Marathi
 
 
+# print("Page should now be translated to English.")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def extract_and_save_data(driver, year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int, folder_path: str):
+def select_english_language(driver, timeout=2):
+    wait = WebDriverWait(driver, timeout)
     
-    print('year', year)
-    print('district', district)
-    print('sro', sro) 
-    print('village_name', village_name) 
-    print('property_no', property_no)
-    print('folder_path\n', folder_path)
+    input("enter detail waiter :")
+    # time.sleep(15)
     
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Registration Data"
+    # if english_translation_injector(driver):
+    if inject_google_translate(driver, 'mr'):
+        try:
+            # Step 1: Click the "Select Language" dropdown
+            lang_dropdown = wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//a[.//span[text()='Select Language']]"))
+            )
+            lang_dropdown.click()
+            time.sleep(2)  # Allow the menu to load
 
-    if wait_for_loader(driver):
-        nested_table = driver.find_element(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table')
-        td_elements = nested_table.find_elements(By.TAG_NAME, 'td')
-        total_page = int(len(td_elements))
+            # Step 2: Switch to iframe containing the language menu
+            iframe = wait.until(
+                EC.presence_of_element_located((By.XPATH, "//iframe[contains(@class, 'VIpgJd-ZVi9od-xl07Ob-OEVmcd')]"))
+            )
+            driver.switch_to.frame(iframe)
 
-    rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
+            # Step 3: Click "English" from the menu
+            # english_option = wait.until(
+            #     EC.element_to_be_clickable((By.XPATH, "//span[text()='English']"))
+            # )
+            # english_option.click()
+            
+            
+            marathi_option = wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//span[text()='Marathi']"))
+            )
+            marathi_option.click()
 
-    header_row = rows[0]  
-    headers = [th.text.strip() for th in header_row.find_elements(By.TAG_NAME, 'th') if th.text.strip()]
-    if headers:
-        ws.append(headers)
-        print(f"Header Row: {headers}")
-
-    # === Step 5: Extract Table Body Rows (from <td> tags), Skipping Last Row ===
-    if wait_for_loader(driver):
-        text_to_find = "* Information provided on this site is updated and no physical visit is required to obtain this information"
-        element = driver.find_elements(By.XPATH, f"//b[normalize-space(text())='{text_to_find}']")
-        simulate_context_menu_and_copy(driver, element)
-
-        doc_no = []
-        
-        # for page_no in range(1, total_page + 1):  # Start from page 1 to include all pages
-        #     if wait_for_loader(driver):
-        #         print('p ', page_no)
-        #         if page_no != 1:  # Skip clicking for the first page
-        #         # if page_no > 1:
-        #             print(f"\nNavigating to page {page_no}")
-        #             xpath = f'//*[@id="RegistrationGrid"]/tbody/tr[12]/td/table/tbody/tr/td[{page_no}]/a'
-        #             if wait_for_loader(driver):
-        #                 link = driver.find_element(By.XPATH, xpath)
-        #                 link.click()
-        #                 time.sleep(5)
-
-        if wait_for_loader(driver):
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            # wait_for_loader(driver)
-
-        if wait_for_loader(driver):
-            driver.execute_script("window.scrollTo(0, 0);")
+            # Step 4: Switch back to main content
+            driver.switch_to.default_content()
             time.sleep(3)
-            # Re-fetch and scrape after navigating
-            rows = driver.find_elements(By.XPATH, '//*[@id="RegistrationGrid"]/tbody/tr')
-            for i, row in enumerate(rows[1:-1], start=2):  # Skip header and pagination row
-                tds = row.find_elements(By.TAG_NAME, 'td')
-                row_data = [td.text.strip() for td in tds]
-                if row_data:
-                    doc_no.append(row_data[0])
-                    update_json_data(year, row_data, headers=headers)
-                    ws.append(row_data)
-                    print(f"Row {i}: {row_data}")
 
-            
-            # # input("start pdf work :")
+            print("✅ English language selected.")
+            return True
 
-            # if wait_for_loader(driver):
-            #     # doc_no = [9306, 4077, 676, 956, 126, 12666, 12310, 7488, 1580, 4103]
-            #     print('doc_no :', doc_no)
-            #     click_indexii_buttons(driver, doc_no)
-            #     doc_no.clear()
-
-
-
-
-            
-
-            # if wait_for_loader(driver):
-            #     print("\nProceeding for clear fields")
-            #     driver.execute_script("window.scrollTo(0, 0);")
-            #     time.sleep(3)
-            #     driver.find_element(By.ID, "btnCancel").click()
-            
-            # if wait_for_loader(driver):
-            #     print("\nProceeding for clear fields")
-            #     driver.execute_script("window.scrollTo(0, 0);")
-            #     time.sleep(10)
-            #     # driver.find_element(By.XPATH, "/html/body/center/form/div[3]/div/div/div[2]/div/div[2]/div/div[2]/div/div[6]/div[2]/input").click()
-
-            #     input('waiter :')
-
-            # print("\nEnter details of property again")
-            # if wait_for_loader(driver):
-            #     print('year_2 :', year)
-            #     print('district_2 :', district)
-            #     print('district_english_2 :', district_english)
-            #     print('sro_2 :', sro) 
-            #     print('village_name_2 :', village_name) 
-            #     print('property_no_2 :', property_no)
-            #     print('folder_path_2 :\n', folder_path)
-
-            #     tab = WebDriverWait(driver, 10).until(
-            #     expected_conditions.element_to_be_clickable((By.ID, "btnMumbaisearch"))
-            #     )
-            #     tab.click()
-
-            #     input('waiter 2 :')
-
-            #     time.sleep(5)
-
-            #     if wait_for_loader(driver):
-            #         enter_property_details(driver, year, district_english, sro, village_name, property_no)
-
-            #     if wait_for_loader(driver):
-            #         captcha_retrieval(driver, limit=2)
-            #         print('go to extract again 2')
-            #         time.sleep(5)
-
-            #     input('waiter for extract')   
-
-            #     if wait_for_loader(driver):
-            #         # extract_and_save_data(driver, year, folder_path)
-            #         extract_and_save_data(driver, year, district, district_english, sro, village_name, property_no, folder_path)
-
-
-
-
-            total_pages = get_pagination_count(driver)
-            print("Total pages:", total_pages)
-            
-            # for i in range(2, total_pages + 1):
-            #     print(f"Clicking page {i}...")
-
-            #     success = click_page(
-            #         driver,
-            #         page_index=i,
-            #         wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),  # adjust to your table’s selector
-            #         timeout=10
-            #     )
-            #     print(f"Clicked page {i} – success? {success}")
-
-            #     if wait_for_loader(driver):
-            #         retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
-
-
-
-
-
-            i = 2
-            while i <= total_pages:
-                try:
-                    print(f"Clicking page {i}...")
-
-                    success = click_page(
-                        driver,
-                        page_index=i,
-                        wait_selector=(By.CSS_SELECTOR, "table#yourDataTable tbody tr"),
-                        timeout=10
-                    )
-                    print(f"Clicked page {i} – success? {success}")
-
-                    if wait_for_loader(driver):
-                        retry_property_entry_flow(driver, year, district, district_english, sro, village_name, property_no, folder_path)
-
-                    i += 1  # Increment only after successful steps
-                except Exception as e:
-                    print(f"Error on page {i}: {e}")
-                    # Optionally: add a delay or retry mechanism here
-                    i += 1  # Still increment to avoid infinite loop
-
-
-
-                    # input("Press Enter to continue to the next page :")
-    #             print('page_no track', page_no)
-
-    # print(f"\nProcessing row {i}...")
-        # input("Press :")
-
-    excel_file = path.join(folder_path, f"{year}.xlsx")
-    wb.save(excel_file)
-    print(f"\n✅ Data successfully saved to: {excel_file}")
-
-
+        except Exception as e:
+            print("❌ Failed to select English:", str(e))
+            return False
