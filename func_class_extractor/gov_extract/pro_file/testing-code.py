@@ -1977,88 +1977,168 @@ driver.get(file_url)
 input('per :')
 time.sleep(5)
 
-def english_translation_injector(driver):
-    # Inject Google Translate widget
-    inject_script = """
-        var script = document.createElement('script');
-        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        document.body.appendChild(script);
+text_to_find = "Note:-Generated Through eSearch Module,For original report please contact concern SRO office."
+xpath = f"//font[normalize-space(text())='{text_to_find}']"
 
-        var div = document.createElement('div');
-        div.id = 'google_translate_element';
-        document.body.appendChild(div);
-
-        window.googleTranslateElementInit = function() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'auto',
-                includedLanguages: 'en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        };
-    """
-    driver.execute_script(inject_script)
-    time.sleep(3)
-
-    # Try to click "English" option inside iframe
-    auto_translate = """
-        var interval = setInterval(function() {
-            var iframe = document.querySelector('iframe.goog-te-menu-frame');
-            if (iframe) {
-                var doc = iframe.contentDocument || iframe.contentWindow.document;
-                var spans = doc.querySelectorAll('span.text');
-                for (var i = 0; i < spans.length; i++) {
-                    if (spans[i].innerText === 'English') {
-                        spans[i].click();
-                        clearInterval(interval);
-                        break;
-                    }
-                }
-            }
-        }, 1000);
-    """
-    driver.execute_script(auto_translate)
-    time.sleep(2)
-
-# print("Page should now be translated to English.")
-
-
-def select_english_language(driver, timeout=15):
-    wait = WebDriverWait(driver, timeout)
+try:
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.XPATH, xpath))
+    )
+    print("Element is visible.")
+except TimeoutException:
+    print("Element not found.")
     
-    try:
-        # Step 1: Click the "Select Language" dropdown
-        lang_dropdown = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[.//span[text()='Select Language']]"))
-        )
-        lang_dropdown.click()
-        time.sleep(2)  # Allow the menu to load
 
-        # Step 2: Switch to iframe containing the language menu
-        iframe = wait.until(
-            EC.presence_of_element_located((By.XPATH, "//iframe[contains(@class, 'VIpgJd-ZVi9od-xl07Ob-OEVmcd')]"))
-        )
-        driver.switch_to.frame(iframe)
+# def english_translation_injector(driver):
+#     # Inject Google Translate widget
+#     inject_script = """
+#         var script = document.createElement('script');
+#         script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+#         document.body.appendChild(script);
 
-        # Step 3: Click "English" from the menu
-        english_option = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//span[text()='English']"))
-        )
-        english_option.click()
+#         var div = document.createElement('div');
+#         div.id = 'google_translate_element';
+#         document.body.appendChild(div);
 
-        # Step 4: Switch back to main content
-        driver.switch_to.default_content()
+#         window.googleTranslateElementInit = function() {
+#             new google.translate.TranslateElement({
+#                 pageLanguage: 'auto',
+#                 includedLanguages: 'en',
+#                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+#             }, 'google_translate_element');
+#         };
+#     """
+#     driver.execute_script(inject_script)
+#     time.sleep(3)
 
-        print("✅ English language selected.")
-        return True
+#     # Try to click "English" option inside iframe
+#     auto_translate = """
+#         var interval = setInterval(function() {
+#             var iframe = document.querySelector('iframe.goog-te-menu-frame');
+#             if (iframe) {
+#                 var doc = iframe.contentDocument || iframe.contentWindow.document;
+#                 var spans = doc.querySelectorAll('span.text');
+#                 for (var i = 0; i < spans.length; i++) {
+#                     if (spans[i].innerText === 'English') {
+#                         spans[i].click();
+#                         clearInterval(interval);
+#                         break;
+#                     }
+#                 }
+#             }
+#         }, 1000);
+#     """
+#     driver.execute_script(auto_translate)
+#     time.sleep(2)
 
-    except Exception as e:
-        print("❌ Failed to select English:", str(e))
-        return False
+# # print("Page should now be translated to English.")
 
-english_translation_injector(driver)
-# select_english_language(driver, timeout=15)
 
-input('stopper')
+# def select_english_language(driver, timeout=15):
+#     wait = WebDriverWait(driver, timeout)
+    
+#     try:
+#         # Step 1: Click the "Select Language" dropdown
+#         lang_dropdown = wait.until(
+#             EC.element_to_be_clickable((By.XPATH, "//a[.//span[text()='Select Language']]"))
+#         )
+#         lang_dropdown.click()
+#         time.sleep(2)  # Allow the menu to load
+
+#         # Step 2: Switch to iframe containing the language menu
+#         iframe = wait.until(
+#             EC.presence_of_element_located((By.XPATH, "//iframe[contains(@class, 'VIpgJd-ZVi9od-xl07Ob-OEVmcd')]"))
+#         )
+#         driver.switch_to.frame(iframe)
+
+#         # Step 3: Click "English" from the menu
+#         english_option = wait.until(
+#             EC.element_to_be_clickable((By.XPATH, "//span[text()='English']"))
+#         )
+#         english_option.click()
+
+#         # Step 4: Switch back to main content
+#         driver.switch_to.default_content()
+
+#         print("✅ English language selected.")
+#         return True
+
+#     except Exception as e:
+#         print("❌ Failed to select English:", str(e))
+#         return False
+
+# english_translation_injector(driver)
+# # select_english_language(driver, timeout=15)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def inject_google_translate(driver, lang_code='en'):
+
+#     language_map = {
+#         'en': 'English',
+#         'mr': 'Marathi'
+#     }
+
+#     if lang_code not in language_map:
+#         raise ValueError(f"Unsupported language code: {lang_code}")
+
+#     driver.execute_script(f"""
+#         var script = document.createElement('script');
+#         script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+#         document.body.appendChild(script);
+#         var div = document.createElement('div');
+#         div.id = 'google_translate_element';
+#         document.body.appendChild(div);
+#         window.googleTranslateElementInit = function() {{
+#             new google.translate.TranslateElement({{
+#                 pageLanguage: 'auto',
+#                 includedLanguages: '{lang_code}',
+#                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+#             }}, 'google_translate_element');
+#         }};
+#     """)
+
+#     time.sleep(5)
+
+#     driver.execute_script(f"""
+#         var interval = setInterval(function() {{
+#             var iframe = document.querySelector('iframe.goog-te-menu-frame');
+#             if (iframe) {{
+#                 var frameDoc = iframe.contentDocument || iframe.contentWindow.document;
+#                 var langBtn = Array.from(frameDoc.querySelectorAll('span.text')).find(el => el.textContent === '{language_map[lang_code]}');
+#                 if (langBtn) {{
+#                     langBtn.click();
+#                     clearInterval(interval);
+#                 }}
+#             }}
+#         }}, 1000);
+#     """)
+
+ 
+
+# # Example usage:
+
+# inject_google_translate(driver, 'en')  # For English
+
+# # inject_google_translate(driver, 'mr')  # For Marathi
+
+
+# input('stopper')
 
 
 

@@ -7,7 +7,7 @@ from time import sleep
 from typing import Any, List
 from selenium.webdriver.support import expected_conditions
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, StaleElementReferenceException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException, NoSuchElementException,  ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
@@ -15,40 +15,44 @@ from selenium.webdriver.support import expected_conditions as EC
 from driver_setup import get_chrome_driver, file_url
 # from utils import *
 from utils.utils import *
+# from utils.common import enter_property_details  # if common.py is inside utils/
+
 from openpyxl import Workbook
 
-def go_to_mumbai_tab(driver):
-    for _ in range(10):
-        try:
-            time.sleep(2)
-            driver.get("https://freesearchigrservice.maharashtra.gov.in")
-            # driver.get(file_url)
-            time.sleep(5)
-            # pyautogui.hotkey('ctrl', 'l')
-            # time.sleep(2)
-            # human_type_keyboard("https://freesearchigrservice.maharashtra.gov.in")
-            # time.sleep(10)
+# def go_to_mumbai_tab(driver):
+#     for _ in range(10):
+#         try:
+#             time.sleep(2)
+#             driver.get("https://freesearchigrservice.maharashtra.gov.in")
+#             # driver.get(file_url)
+#             time.sleep(5)
+#             # pyautogui.hotkey('ctrl', 'l')
+#             # time.sleep(2)
+#             # human_type_keyboard("https://freesearchigrservice.maharashtra.gov.in")
+#             # time.sleep(10)
 
-        except TimeoutException:
-            print("Failed to load page")
-            continue
+#         except TimeoutException:
+#             print("Failed to load page")
+#             continue
 
-        try:
-            close_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "btnclose"))).click()
-            tab = WebDriverWait(driver, 10).until(
-                expected_conditions.element_to_be_clickable((By.ID, "btnMumbaisearch"))
-            )
-            tab.click()
-            sleep(2)
-            WebDriverWait(driver, 30).until(
-                expected_conditions.invisibility_of_element((By.ID, "UpdateProgress1"))
-            )
-            WebDriverWait(driver, 30).until(
-                expected_conditions.invisibility_of_element((By.ID, "UpdateProgress5"))
-            )
-            return
-        except TimeoutException:
-            print("Failed to load page elements")
+#         try:
+#             if wait_until_chrome_page_fully_loaded(driver):
+#                 if wait_for_loader(driver):
+#                     close_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "btnclose"))).click()
+#                     tab = WebDriverWait(driver, 10).until(
+#                         expected_conditions.element_to_be_clickable((By.ID, "btnMumbaisearch"))
+#                     )
+#                     tab.click()
+#                     sleep(2)
+#                     WebDriverWait(driver, 30).until(
+#                         expected_conditions.invisibility_of_element((By.ID, "UpdateProgress1"))
+#                     )
+#                     WebDriverWait(driver, 30).until(
+#                         expected_conditions.invisibility_of_element((By.ID, "UpdateProgress5"))
+#                     )
+#                     return
+#         except TimeoutException:
+#             print("Failed to load page elements")
 
 
 def close_popups(driver):
@@ -147,6 +151,23 @@ def is_pagination_row(entries: List[str]) -> bool:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # def enter_property_details(driver, year: int, district: str, sro: str, village_name: str, property_no: int):
 #     try:
 #         if wait_for_loader(driver):
@@ -164,11 +185,31 @@ def is_pagination_row(entries: List[str]) -> bool:
 #             print("\nProceeding for enter village name")
 #             enter_input(driver, "txtAreaName", village_name)
 #             time.sleep(2)  
+
+#             take_screenshot(driver, name="s.png")
+#             # input('SS WAIT :')
             
 #         if wait_for_loader(driver):
-#             print("\nProceeding for enter village name")
-#             choose_select_option(driver, "ddlareaname", sro)
-#             time.sleep(2)
+#             print("\nProceeding for select village name")
+
+#             try:
+#                 dropdown = driver.find_element(By.ID, 'ddlareaname')
+#                 dropdown.click()
+#                 print("[✓] Clicked on the area name dropdown.")
+#             except (NoSuchElementException, ElementClickInterceptedException) as e:
+#                 take_screenshot(driver, name="ddlareaname_click_error")
+#                 print(f"[!] Error clicking 'ddlareaname': {e}")
+
+#             if wait_for_loader(driver):
+#                 take_screenshot(driver, name="t.png")
+
+#             if wait_for_loader(driver):
+#                 choose_select_option(driver, "ddlareaname", sro)
+#                 time.sleep(2)
+
+#             # take_screenshot(driver, name="t.png")
+
+#             # input('SS WAIT 2:')
         
 #         if wait_for_loader(driver):
 #             print("\nProceeding for enter property number")
@@ -176,48 +217,38 @@ def is_pagination_row(entries: List[str]) -> bool:
 #             time.sleep(2)
 #         else:
 #             print("\nStopping due to loader timeout after property number.")
+
+#         # take_screenshot(driver, name="ss.png")
     
-#     except Exception as e:
+#     except Exception as e:  
 #         print(f"\nAn error occurred while entering property details: {e}")
 
 
-# def extract_for_year(driver, year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int):
-def extract_for_year(driver, year: int, district: str, sro: str, village_name: str, property_no: int):
+# def extract_for_year(driver, year: int, district: str, sro: str, village_name: str, property_no: int):
+def extract_for_year(driver, year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int):
     folder_path = path.join(district, sro, str(property_no))
     makedirs(folder_path, exist_ok=True)
     go_to_mumbai_tab(driver)
 
-    # english_translation_injector(driver)
-    if select_english_language(driver, timeout=15):
-        time.sleep(3)
-        # input('allow :')
-        enter_property_details(driver, year, district, sro, village_name, property_no)
-
-        # enter_property_details(driver, year, district, sro, village_name, property_no)
-        captcha_retrieval(driver, limit=2)
-        # input('captcha retrieval :')
-        time.sleep(5)
-        print('go to extract')
-        # excel_generated_by_language(driver, year, folder_path)
-        if wait_for_loader(driver):
-            # extract_and_save_data(driver, year, folder_path)
-            extract_and_save_data(driver, year, district, sro, village_name, property_no, folder_path)
-
+    # if select_english_language(driver):
+        # time.sleep(3)
+    enter_property_details(driver, year, district, sro, village_name, property_no)
+    take_screenshot(driver, name="ss2.png") 
+    # captcha_retrieval(driver, limit=2)
+    captcha_retrieval(driver, limit=5)
     
-    # close_popups(driver)
-    # extract_and_save_data(driver, year, folder_path, language='marathi')
-
-    # print('go to extract')
-    # extract_and_save_data(driver, year, folder_path, language='marathi')
-    # time.sleep(2)  
-    # simulate_context_menu_and_copy(driver)
-    # time.sleep(5)
-    # extract_and_save_data(driver, year, folder_path, language='english')
-    # time.sleep(2)
+    print('go to extract')
+    time.sleep(5)
+    take_screenshot(driver, name="ss3.png")
+    # excel_generated_by_language(driver, year, folder_path)
+    if wait_for_loader(driver):
+        # extract_and_save_data(driver, year, folder_path)
+        extract_and_save_data(driver, year, district, district_english, sro, village_name, property_no, folder_path)
+        # extract_and_save_data(driver, year, district, district_english, sro, village_name, property_no, folder_path)
 
 
-# def extract(start_year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int):
-def extract(start_year: int, district: str, sro: str, village_name: str, property_no: int):
+# def extract(start_year: int, district: str, sro: str, village_name: str, property_no: int):
+def extract(start_year: int, district: str, district_english: str, sro: str, village_name: str, property_no: int):
     current_year = int(date.today().strftime("%Y"))
 
     for year in range(start_year, current_year + 1):
@@ -225,7 +256,8 @@ def extract(start_year: int, district: str, sro: str, village_name: str, propert
             with get_chrome_driver() as driver:
                 try:
                     print(f"Attempt: {i+1}. Extracting entries for year: {year}")
-                    extract_for_year(driver, year, district, sro, village_name, property_no)
+                    # extract_for_year(driver, year, district, sro, village_name, property_no)
+                    extract_for_year(driver, year, district, district_english, sro, village_name, property_no)
                     print(f"Extracted entries for year: {year}")
                     break
                 except StaleElementReferenceException as e:
